@@ -77,31 +77,57 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(top: 10.0),
-              itemCount: _toDoList.length,
-              itemBuilder: (context, index) {
-                return CheckboxListTile(
-                  onChanged: (value) {
-                    setState(() {
-                      _toDoList[index]['ok'] = value;
-                      _saveData();
-                    });
-                  },
-                  title: Text(_toDoList[index]['title']),
-                  value: _toDoList[index]['ok'],
-                  secondary: CircleAvatar(
-                    child: Icon(
-                        _toDoList[index]['ok'] ? Icons.check : Icons.error),
-                  ),
-                );
-              },
-            ),
-          ),
+              child: ListView.builder(
+                  padding: EdgeInsets.only(top: 10.0),
+                  itemCount: _toDoList.length,
+                  itemBuilder: buildItem)),
         ],
       ),
     );
   }
+
+  Widget buildItem(context, index) {
+    return Dismissible(
+      background: Container(
+        color: Colors.red,
+        child: Align(
+          alignment: Alignment(-0.9, 0.0),
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      direction: DismissDirection.startToEnd,
+      key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
+      child: CheckboxListTile(
+        title: Text(_toDoList[index]['title']),
+        value: _toDoList[index]['ok'],
+        secondary: CircleAvatar(
+          child: Icon(_toDoList[index]['ok'] ? Icons.check : Icons.error),
+        ),
+        onChanged: (value) {
+          setState(() {
+            _toDoList[index]['ok'] = value;
+            _saveData();
+          });
+        },
+      ),
+    );
+  }
+  // CheckboxListTile(
+  //     title: Text(_toDoList[index]['title']),
+  //     value: _toDoList[index]['ok'],
+  //     secondary: CircleAvatar(
+  //       child: Icon(_toDoList[index]['ok'] ? Icons.check : Icons.error),
+  //     ),
+  //     onChanged: (value) {
+  //       setState(() {
+  //         _toDoList[index]['ok'] = value;
+  //         _saveData();
+  //       });
+  //     },
+  //   );
 
   Future<File> _getFile() async {
     final direcoty = await getApplicationDocumentsDirectory();
