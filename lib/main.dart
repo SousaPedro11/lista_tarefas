@@ -26,6 +26,8 @@ class _HomeState extends State<Home> {
   Map<String, dynamic> _lastRemoved;
   int _lastRemovedIndex;
 
+  Color _buildColor() => Colors.deepPurple[900];
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +45,7 @@ class _HomeState extends State<Home> {
       _toDoController.text = '';
       newToDo['ok'] = false;
       _toDoList.add(newToDo);
+      _refresh();
       _saveData();
     });
   }
@@ -61,7 +64,9 @@ class _HomeState extends State<Home> {
             } else if (!a['ok'] && b['ok']) {
               return -1;
             } else {
-              return 0;
+              return a['title']
+                  .toLowerCase()
+                  .compareTo(b['title'].toLowerCase());
             }
           },
         );
@@ -76,7 +81,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text('Lista de Tarefas'),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: _buildColor(),
       ),
       body: Column(
         children: <Widget>[
@@ -89,12 +94,12 @@ class _HomeState extends State<Home> {
                     controller: _toDoController,
                     decoration: InputDecoration(
                       labelText: "Nova Tarefa",
-                      labelStyle: TextStyle(color: Colors.blueAccent),
+                      labelStyle: TextStyle(color: _buildColor()),
                     ),
                   ),
                 ),
                 RaisedButton(
-                  color: Colors.blueAccent,
+                  color: _buildColor(),
                   child: Text("ADD"),
                   textColor: Colors.white,
                   onPressed: _addToDO,
@@ -132,13 +137,17 @@ class _HomeState extends State<Home> {
       child: CheckboxListTile(
         title: Text(_toDoList[index]['title']),
         value: _toDoList[index]['ok'],
+        activeColor: _buildColor(),
         secondary: CircleAvatar(
           child: Icon(_toDoList[index]['ok'] ? Icons.check : Icons.error),
+          backgroundColor: _buildColor(),
+          foregroundColor: Colors.white,
         ),
         onChanged: (value) {
           setState(() {
             _toDoList[index]['ok'] = value;
             _saveData();
+            _refresh();
           });
         },
       ),
